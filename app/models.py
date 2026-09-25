@@ -35,3 +35,13 @@ class Bookissue(Base):
     issued_at = Column(TIMESTAMP, nullable = False, server_default = text('now()'))
     due_date = Column(TIMESTAMP , nullable = False)
     returned_at = Column(TIMESTAMP)
+
+class Login_session(Base):
+    __tablename__ = "Token_store"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete= "CASCADE"), nullable = False)
+    Token = Column(String, nullable = False)
+    created_at = Column(TIMESTAMP,nullable=False, server_default= text('now()'))
+    expiry_time = Column(TIMESTAMP, nullable=False)
+    revoked = Column(Boolean, nullable=False, server_default='False')

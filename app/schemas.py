@@ -1,4 +1,4 @@
-from pydantic import BaseModel,EmailStr, Field ,validator
+from pydantic import BaseModel,EmailStr, Field ,field_validator
 from typing import Optional
 from datetime import datetime
 class BookBase(BaseModel):
@@ -25,7 +25,7 @@ class Registeruser(BaseModel):
     email : EmailStr
     password : str = Field(max_length=72)
 
-    @validator("username")
+    @field_validator("username")
     def validate_username(cls, value):
         if not value.replace("_", "").isalnum():
             raise ValueError("Username can contain only letters, numbers and underscore")
@@ -35,7 +35,7 @@ class Registeruser(BaseModel):
             raise ValueError("Username must not exceed 20 characters")
         return value
 
-    @validator("password")
+    @field_validator("password")
     def validate_password(cls, value):
         if len(value) < 8:
             raise ValueError("Password must contain at least 8 characters")

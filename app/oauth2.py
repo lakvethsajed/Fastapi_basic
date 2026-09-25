@@ -35,8 +35,14 @@ def validate_token(token: str, credentials_exception):
 def current_user(token : str = Depends(oauth_scheme), db : Session = Depends(get_db)):
     credentials_exception = HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail = "Could not verify the credentials", headers={"WWW-Authenticate": "Bearer"})
     token_data = validate_token(token , credentials_exception)
+    session = db.query(models.Login_session).filter(models.Login_session.Token == token,models.Login_session.revoked == False).first()
+    if session is None:
+        raise credentials_exception 
     user = db.query(models.User).filter(models.User.id == token_data.id).first()
+    if user is None:
+        raise credentials_exception
     return user
+
 def admin_user(current_user = Depends(current_user)):
     if current_user.role != "admin":
         raise HTTPException(status_code = status.HTTP_403_FORBIDDEN, detail = "only admin can perform this operation")
